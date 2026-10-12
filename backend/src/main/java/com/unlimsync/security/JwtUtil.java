@@ -22,7 +22,7 @@ public class JwtUtil {
     }
 
     public static String validateAndGetSubject(String token) {
-        return Jwts.parserBuilder()
+        return Jwts.parser()
                 .setSigningKey(KEY)
                 .build()
                 .parseClaimsJws(token)
