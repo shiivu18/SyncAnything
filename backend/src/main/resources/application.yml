@@ -5,7 +5,6 @@ spring:
 server:
   port: 8080
 
-spring:
   datasource:
     url: jdbc:postgresql://postgres:5432/unlimsync
     username: ${POSTGRES_USER}
@@ -22,3 +21,6 @@ spring:
 # Placeholder JWT secret – override via environment variable at runtime
 jwt:
   secret: "${JWT_SECRET:default-secret}"
+telegram:
+  bot-token: "${TELEGRAM_BOT_TOKEN:}"
+  chat-id: "${TELEGRAM_CHAT_ID:}"
