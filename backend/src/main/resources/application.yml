@@ -1,10 +1,6 @@
 spring:
   application:
     name: unlimsync-backend
-
-server:
-  port: 8080
-
   datasource:
     url: jdbc:postgresql://postgres:5432/unlimsync
     username: ${POSTGRES_USER}
@@ -18,7 +14,9 @@ server:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
-# Placeholder JWT secret – override via environment variable at runtime
+server:
+  port: 8080
+
 jwt:
   secret: "${JWT_SECRET:default-secret}"
 telegram:
