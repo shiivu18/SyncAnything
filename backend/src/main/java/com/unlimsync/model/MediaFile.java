@@ -1,10 +1,10 @@
 package com.unlimsync.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.*; // includes Index
 import java.time.Instant;
 
 @Entity
-@Table(name = "media_files")
+@Table(name = "media_files", indexes = @Index(name = "idx_telegram_file_id", columnList = "telegram_file_id"))
 public class MediaFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

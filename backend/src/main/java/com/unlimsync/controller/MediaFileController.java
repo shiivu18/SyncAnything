@@ -52,8 +52,8 @@ public class MediaFileController {
      * @param size page size
      */
     @GetMapping("/list/paged")
-    public ResponseEntity<Page<MediaFile>> listPaginated(@RequestParam(defaultValue = "0") int page,
-                                                          @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<MediaFile>> listPaginated(@RequestParam(name = "page", defaultValue = "0") int page,
+                                                          @RequestParam(name = "size", defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<MediaFile> pageResult = mediaFileRepository.findAll(pageable);
         return ResponseEntity.ok(pageResult);
@@ -83,7 +83,7 @@ public class MediaFileController {
 
     /** Retrieve a single media entry by its database ID */
     @GetMapping("/{id}")
-    public ResponseEntity<MediaFile> getById(@PathVariable Long id) {
+    public ResponseEntity<MediaFile> getById(@PathVariable("id") Long id) {
         Optional<MediaFile> opt = mediaFileRepository.findById(id);
         return opt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -93,7 +93,7 @@ public class MediaFileController {
      * Streams the file back to the client as octet‑stream.
      */
     @GetMapping("/{id}/download")
-    public ResponseEntity<InputStreamResource> downloadById(@PathVariable Long id) throws IOException {
+    public ResponseEntity<InputStreamResource> downloadById(@PathVariable("id") Long id) throws IOException {
         Optional<MediaFile> opt = mediaFileRepository.findById(id);
         if (!opt.isPresent()) {
             return ResponseEntity.notFound().build();
@@ -116,7 +116,7 @@ public class MediaFileController {
 
     /** Delete a media entry (also optionally delete from Telegram) */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         if (!mediaFileRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }

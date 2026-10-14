@@ -1,8 +1,8 @@
-FROM eclipse-temurin:21-jdk AS build
+FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /app
-COPY pom.xml ./
+COPY pom.xml .
 COPY src ./src
-RUN ./mvnw -B package -DskipTests
+RUN mvn -B package -DskipTests -Dspring-boot.repackage.enabled=true
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app

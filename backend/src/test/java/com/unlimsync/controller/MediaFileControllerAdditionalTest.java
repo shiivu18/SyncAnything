@@ -51,7 +51,7 @@ class MediaFileControllerAdditionalTest {
         file.setChatId(null);
         file.setUploadedAt(Instant.now());
         Page<MediaFile> page = new PageImpl<>(Collections.singletonList(file), PageRequest.of(0, 10), 1);
-        Mockito.when(mediaFileRepository.findAll(any())).thenReturn(page);
+        Mockito.when(mediaFileRepository.findAll(org.mockito.ArgumentMatchers.any(org.springframework.data.domain.Pageable.class))).thenReturn(page);
         mockMvc.perform(get("/api/v1/media/list/paged").param("page", "0").param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].id").value(1));
