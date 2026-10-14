@@ -53,7 +53,7 @@ public class TelegramStorageController {
      * @return the file content as an octet-stream response
      */
     @GetMapping("/download/{fileId}")
-    public ResponseEntity<InputStreamResource> download(@PathVariable String fileId) throws IOException {
+    public ResponseEntity<InputStreamResource> download(@PathVariable("fileId") String fileId) throws IOException {
         // Download to a temporary location
         File temp = File.createTempFile("download-", "tmp");
         telegramStorageService.downloadFile(fileId, temp.getAbsolutePath());
@@ -77,7 +77,7 @@ public class TelegramStorageController {
      * @return a URL string that the client can use to download the file directly from Telegram
      */
     @GetMapping("/url/{fileId}")
-    public ResponseEntity<String> getDownloadUrl(@PathVariable String fileId) {
+    public ResponseEntity<String> getDownloadUrl(@PathVariable("fileId") String fileId) {
         String url = telegramStorageService.getFileDownloadUrl(fileId);
         return ResponseEntity.ok(url);
     }

@@ -14,8 +14,14 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
 @RestController
 @RequestMapping("/api/v1/media")
+@Tag(name = "Media", description = "Operations for managing media files")
 public class MediaFileController {
 
     private final MediaFileRepository mediaFileRepository;
