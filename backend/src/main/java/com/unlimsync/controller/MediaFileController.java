@@ -5,6 +5,12 @@ import com.unlimsync.repository.MediaFileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import com.unlimsync.service.telegram.TelegramStorageService;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
@@ -40,6 +46,19 @@ public class MediaFileController {
         return ResponseEntity.ok(all);
     }
 
+    /**
+     * Paginated list of media files.
+     * @param page zero‑based page index
+     * @param size page size
+     */
+    @GetMapping("/list/paged")
+    public ResponseEntity<Page<MediaFile>> listPaginated(@RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<MediaFile> pageResult = mediaFileRepository.findAll(pageable);
+        return ResponseEntity.ok(pageResult);
+    }
+
     /** Upload a file to Telegram and persist its metadata */
     @PostMapping("/upload")
     public ResponseEntity<MediaFile> upload(@RequestParam("file") MultipartFile file,
@@ -67,6 +86,32 @@ public class MediaFileController {
     public ResponseEntity<MediaFile> getById(@PathVariable Long id) {
         Optional<MediaFile> opt = mediaFileRepository.findById(id);
         return opt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Download the media file from Telegram using stored file_id.
+     * Streams the file back to the client as octet‑stream.
+     */
+    @GetMapping("/{id}/download")
+    public ResponseEntity<InputStreamResource> downloadById(@PathVariable Long id) throws IOException {
+        Optional<MediaFile> opt = mediaFileRepository.findById(id);
+        if (!opt.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        MediaFile media = opt.get();
+        // Download to temp file
+        File temp = File.createTempFile("download-", "tmp");
+        telegramStorageService.downloadFile(media.getTelegramFileId(), temp.getAbsolutePath());
+        InputStreamResource resource = new InputStreamResource(new java.io.FileInputStream(temp));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + temp.getName() + "\"");
+        headers.setContentLength(temp.length());
+        // Ensure temp file cleanup after response
+        temp.deleteOnExit();
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
     }
 
     /** Delete a media entry (also optionally delete from Telegram) */
