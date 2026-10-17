@@ -2,6 +2,9 @@ FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
+# Repackage the Spring Boot JAR (adds Main-Class)
+RUN mvn -B package -DskipTests -Dspring-boot.repackage.enabled=true
+
 RUN mvn -B package -DskipTests -Dspring-boot.repackage.enabled=true
 
 FROM eclipse-temurin:21-jre

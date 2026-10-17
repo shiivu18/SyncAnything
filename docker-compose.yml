@@ -7,16 +7,22 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: unlimsync
     ports:
-      - "5432:5432"
+      - "5434:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
   backend:
+    network_mode: "host"
     build: ./backend
     environment:
       POSTGRES_USER: unlimsync
       POSTGRES_PASSWORD: password
       POSTGRES_DB: unlimsync
       JWT_SECRET: super-secret-key
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/unlimsync
+      SPRING_DATASOURCE_USERNAME: unlimsync
+      SPRING_DATASOURCE_PASSWORD: password
+      TELEGRAM_BOT_TOKEN: ""
+      TELEGRAM_CHAT_ID: ""
     ports:
       - "8080:8080"
     depends_on:
